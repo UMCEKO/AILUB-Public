@@ -1,0 +1,10 @@
+-Allows you to setup your password at the setup. (Full integration with simple login.)
+-Allows you to download modpacks with a 7 digit code. (Using the last 7 digits from the shortened link that you create from https://www.bit.ly/)
+-Update modpacks easily with a 7 digit code. (Also from the bit.ly)
+-Automatically makes you a chad for using it.
+-Keep the options and your password files even if you update the pack.
+-Allows you to completely reset it (except cached files) just by running setup again.
+-Automatically connects to the ip that you put in at the start.
+-Remembers the last ip that you put in.
+-Admins can change the default ip that is written on the first start by editing "ip.ini"
+-Displays an input prompt which connects to the server that you enter the ip address of.
