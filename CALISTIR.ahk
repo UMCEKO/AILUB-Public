@@ -4,6 +4,6 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 IniRead, Link, Link.ini, 1
 IniRead, Name, Name.ini, 1
-run, cmd.exe /c "%A_ScriptDir%\UltimMC\UltimMC" --launch %Link% --profile %Name% --server %ip%, , Hide
+run, cmd.exe /c "%A_ScriptDir%\UltimMC\UltimMC" --launch %Link% --profile %Name% --server KraliyetTr.aternos.me, , Hide
 FileDelete, ip.ini
 IniWrite, %ip%, ip.ini, 1
