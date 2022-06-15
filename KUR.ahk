@@ -2,6 +2,7 @@
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+RegRead, Hostnm, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\Tcpip\Parameters, Hostname
 MsgBox Made by Umut Cevdet Koçak (Discord: Umut#3333)
 InputBox, Link, Kodu giriniz, Size discorddan verilen kodu giriniz (Örnek: 56FdaX7), , , 130
 if (ErrorLevel = 0) {
@@ -56,7 +57,7 @@ if (ErrorLevel = 0) {
 					JsonEditor=
 					JvmArgs=
 					Language=en_US
-					LastHostname=%A_ComputerName%
+					LastHostname=%Hostnm%
 					LastUsedGroupForNewInstance=
 					LaunchMaximized=false
 					MCEditPath=
@@ -100,11 +101,10 @@ if (ErrorLevel = 0) {
 					Sleep, 100
 					Send, {Enter}
 					downloading:
-					Sleep, 3000
+					Sleep, 2000
 					if WinExist("Please wait... - UltimMC 5"){
 						Goto, downloading
 						}
-					Sleep, 500
 					if WinExist("SETUP")
 						WinClose
 					FileDelete, Name.ini
