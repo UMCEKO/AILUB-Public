@@ -7,9 +7,11 @@ if (ErrorLevel = 0) {
 IniRead, Link, Link.ini, 1
 FileCopy, UltimMC\instances\%Link%\.minecraft\options.txt, options.txt
 FileRemoveDir, UltimMC\instances, 1
-run, cmd.exe /c title SETUP && UltimMC\UltimMC --import https://www.bit.ly/, , Min
+run, cmd.exe /c title SETUP && UltimMC\UltimMC --import https://www.bit.ly/%Update%, , Min
+instance:
+if WinExist("New Instance - UltimMC 5"){
 Sleep, 2000
-Send, {Tab}{Tab}{Tab}{Tab}{Tab}{Right}%Update%{Enter}
+Send, {Enter}
 downloading:
 Sleep, 1000
 if WinExist("Please wait... - UltimMC 5"){
@@ -23,6 +25,10 @@ FileCopy, .sl_password, UltimMC\instances\%Update%\.minecraft\
 FileCopy, options.txt, UltimMC\instances\%Update%\.minecraft\
 FileDelete, options.txt
 MsgBox Güncelleme tamamlandı
+}
+else {
+	Goto, instance
+}
 }
 else {
 MsgBox, İşlemi iptal ettiniz.

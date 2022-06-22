@@ -101,16 +101,19 @@ if (ErrorLevel = 0) {
 					Sleep, 100
 					Send, {Enter}
 					downloading:
-					Sleep, 2000
+					Sleep, 100
 					if WinExist("Please wait... - UltimMC 5"){
 						Goto, downloading
 						}
+					Sleep, 3000
 					if WinExist("SETUP")
 						WinClose
 					FileDelete, Name.ini
 					FileDelete, Link.ini
+					FileDelete, RAM.ini
 					FileDelete, .sl_password
 					FileDelete, UltimMC\instances\%Link%\.minecraft\.sl_password
+					IniWrite, %RAM%, RAM.ini, 1
 					IniWrite, %Name%, Name.ini, 1
 					IniWrite, %Link%, Link.ini, 1
 					FileAppend, %pass%, .sl_password
