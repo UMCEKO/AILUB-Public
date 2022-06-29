@@ -100,12 +100,13 @@ if (ErrorLevel = 0) {
 				if WinExist("New Instance - UltimMC 5") {
 					Sleep, 100
 					Send, {Enter}
+					checkdown:
+					if WinExist("Please wait... - UltimMC 5"){
 					downloading:
-					Sleep, 100
 					if WinExist("Please wait... - UltimMC 5"){
 						Goto, downloading
 						}
-					Sleep, 3000
+					Sleep, 100
 					if WinExist("SETUP")
 						WinClose
 					FileDelete, Name.ini
@@ -119,6 +120,10 @@ if (ErrorLevel = 0) {
 					FileAppend, %pass%, .sl_password
 					FileCopy, .sl_password, UltimMC\instances\%Link%\.minecraft\
 					MsgBox Başarıyla kuruldu.
+					}
+				else{
+					Goto, checkdown
+				}
 				}
 				else {
 					Goto, lang
