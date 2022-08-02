@@ -49,8 +49,6 @@ ExitApp
 ButtonGüncelle:
 Gui, Cancel
 if FileExist("Resources\Installed.ini") {
-InputBox, Update, Kodu giriniz, Size discorddan verilen kodu giriniz (Örnek: 56FdaX7), , , 130
-if (ErrorLevel = 0) {
 IniRead, Link, Resources\Link.ini, 1
 FileMoveDir, UltimMC\instances\%Link%\.minecraft, files, 2
 FileRemoveDir, files\mods, 1
@@ -59,7 +57,7 @@ FileRemoveDir, files\defaultconfigs, 1
 FileRemoveDir, files\packmenu, 1
 FileRemoveDir, files\.slpassword, 1
 FileRemoveDir, UltimMC\instances, 1
-run, cmd.exe /c title SETUP && UltimMC\UltimMC --import https://www.bit.ly/%Update%, , Min
+run, cmd.exe /c title SETUP && UltimMC\UltimMC --import https://www.bit.ly/%Link%, , Min
 instance:
 if WinExist("New Instance - UltimMC 5"){
 Sleep, 2000
@@ -81,10 +79,6 @@ MsgBox Güncelleme tamamlandı
 }
 else {
 	Goto, instance
-}
-}
-else {
-MsgBox, İşlemi iptal ettiniz.
 }
 }
 else {
