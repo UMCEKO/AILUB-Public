@@ -207,6 +207,7 @@ if (ErrorLevel = 0) {
 					if WinExist("Please wait... - UltimMC 5"){
 					downloading1:
 					if WinExist("Please wait... - UltimMC 5"){
+						Sleep, 100
 						Goto, downloading1
 						}
 					Sleep, 100
@@ -223,10 +224,19 @@ if (ErrorLevel = 0) {
 					IniWrite, true, Resources\Installed.ini, 1
 					FileAppend, %pass%, Resources\.sl_password
 					FileCopy, Resources\.sl_password, UltimMC\instances\%Link%\.minecraft\.slpassword
+					if FileExist("UltimMC\instances\" Link) {
 					MsgBox Başarıyla kuruldu.
 					Goto, Start
 					}
+					Else {
+					FileRemoveDir, UltimMC, 1
+					FileRemoveDir, Resources, 1
+					MsgBox, Kurulum Başarısız.
+					Goto, Start
+					}
+					}
 				else{
+					Sleep, 100
 					Goto, checkdown
 				}
 				}
