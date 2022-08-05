@@ -2,27 +2,28 @@
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
-Start:
 MsgBox Made by Umut Cevdet Koçak (Discord: Umut#3333)
+Start:
 Gui, Add, Text,, Lütfen yapacağınız işlemi aşağıdan seçiniz.
 Gui, Add, Button, default, Çalıştır
-Gui, Add, Button, default, Güncelle
-Gui, Add, Button, default, Kur
-Gui, Add, Button, default, Ayarlar
-Gui, Add, Button, default, İptal
+Gui, Add, Button, , Güncelle
+Gui, Add, Button, , Kur
+Gui, Add, Button,  x104 y25, Ayarlar
+Gui, Add, Button, , OyunKlasörü
+Gui, Add, Button, , Sıfırla
+Gui, Add, Button, x10 y110 w200 h24 cFFFF66, İptal
 Gui, Show, , AILUB
 return
 GuiClose:
 Gui, Cancel
-MsgBox, İşlemi iptal ettiniz.
 ExitApp
 Buttonİptal:
 Gui, Cancel
-MsgBox, İşlemi iptal ettiniz.
 ExitApp
 ButtonÇalıştır:
-Gui, Cancel
+
 if FileExist("Resources\Installed.ini") {
+	Gui, Cancel
     IniRead, def, Resources\ip.ini, 1
     IniRead, Link, Resources\Link.ini, 1
     IniRead, Name, Resources\Name.ini, 1
@@ -39,16 +40,19 @@ if FileExist("Resources\Installed.ini") {
                 }
         }
         else{
-                MsgBox, İşlemi iptal ettiniz
+				Goto, Start
             }
 }
 else {
     MsgBox, Lütfen öncelikle kurunuz.
+	return
 }
 ExitApp
 ButtonGüncelle:
-Gui, Cancel
 if FileExist("Resources\Installed.ini") {
+Gui, Cancel
+InputBox, Update, Kodu giriniz, Size discorddan verilen kodu giriniz (Örnek: 56FdaX7), , , 130
+if (ErrorLevel = 0) {
 IniRead, Link, Resources\Link.ini, 1
 FileMoveDir, UltimMC\instances\%Link%\.minecraft, files, 2
 FileRemoveDir, files\mods, 1
@@ -57,16 +61,19 @@ FileRemoveDir, files\defaultconfigs, 1
 FileRemoveDir, files\packmenu, 1
 FileRemoveDir, files\.slpassword, 1
 FileRemoveDir, UltimMC\instances, 1
-run, cmd.exe /c title SETUP && UltimMC\UltimMC --import https://www.bit.ly/%Link%, , Min
+run, cmd.exe /c title SETUP && UltimMC\UltimMC --import https://www.bit.ly/%Update%, , Min
 instance:
 if WinExist("New Instance - UltimMC 5"){
-Sleep, 2000
+Sleep, 100
 Send, {Enter}
+adlkfj:
+if WinExist("Please wait... - UltimMC 5"){
 downloading:
-Sleep, 1000
+Sleep, 100
 if WinExist("Please wait... - UltimMC 5"){
 Goto, downloading
 }
+else{
 if WinExist("SETUP")
 	WinClose
 FileDelete, Resources\Link.ini
@@ -76,16 +83,29 @@ FileCopy, .sl_password, UltimMC\instances\%Update%\.minecraft\.slpassword, 1
 FileRemoveDir, files, 1
 
 MsgBox Güncelleme tamamlandı
+Goto, Start
+}
+}
+else{
+	Goto, adlkfj
+}
+
 }
 else {
 	Goto, instance
 }
 }
 else {
+Goto, Start
+}
+}
+else {
     MsgBox, Lütfen öncelikle kurunuz.
+	return
 }
 ExitApp
 ButtonKur:
+if Not FileExist("Resources\Installed.ini") {
 Gui, Cancel
 RegRead, Hostnm, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\Tcpip\Parameters, Hostname
 InputBox, Link, Kodu giriniz, Size discorddan verilen kodu giriniz (Örnek: 56FdaX7), , , 130
@@ -173,10 +193,9 @@ if (ErrorLevel = 0) {
 					UseNativeOpenAL=false
 					WrapperCommand=
 					)
-				FileDelete, UltimMC\ultimmc.cfg
-				FileDelete, UltimMC\accounts.json
-				FileRemoveDir, UltimMC\instances, 1
-				FileRemoveDir, UltimMC\cache, 1
+				UrlDownloadToFile, https://www.dropbox.com/s/6orikhktpu9tbqu/UltimMCzipped.zip?dl=1, UltimMCzipped.zip
+				RunWait, cmd.exe /c tar -xf UltimMCzipped.zip, , Min
+				FileDelete, UltimMCzipped.zip
 				FileAppend, %account%, UltimMC\accounts.json
 				FileAppend, %config%, UltimMC\ultimmc.cfg
 				run, cmd.exe /c title SETUP && UltimMC\UltimMC --import https://www.bit.ly/%Link%, , Min
@@ -197,15 +216,15 @@ if (ErrorLevel = 0) {
 					FileDelete, Resources\Link.ini
 					FileDelete, Resources\RAM.ini
 					FileDelete, Resources\.sl_password
-					FileDelete, UltimMC\instances\%Link%\.minecraft\.sl_password
                     FileCreateDir, Resources
 					IniWrite, %RAM%, Resources\RAM.ini, 1
 					IniWrite, %Name%, Resources\Name.ini, 1
 					IniWrite, %Link%, Resources\Link.ini, 1
 					IniWrite, true, Resources\Installed.ini, 1
 					FileAppend, %pass%, Resources\.sl_password
-					FileCopy, .sl_password, UltimMC\instances\%Link%\.minecraft\
+					FileCopy, Resources\.sl_password, UltimMC\instances\%Link%\.minecraft\.slpassword
 					MsgBox Başarıyla kuruldu.
+					Goto, Start
 					}
 				else{
 					Goto, checkdown
@@ -217,24 +236,30 @@ if (ErrorLevel = 0) {
 					}
 				}
 			else {
-			MsgBox, İşlemi iptal ettiniz. 
+			Goto, Start
 			}
 			}
 		else {
-		MsgBox, İşlemi iptal ettiniz.
+		Goto, Start
 		}
 		}
 	else {
-	MsgBox, İşlemi iptal ettiniz.
+	Goto, Start
 	}
 	}
 else {
-MsgBox, İşlemi iptal ettiniz.
+Goto, Start
 }
+}
+else {
+MsgBox, Zaten kurulu.
+return
+}
+
 ExitApp
 ButtonAyarlar:
-Gui, Cancel
 if FileExist("Resources\Installed.ini") {
+Gui, Cancel
 RegRead, Hostnm, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\Tcpip\Parameters, Hostname
 IniRead, RAM, Resources\RAM.ini, 1
 					config = 
@@ -303,7 +328,8 @@ IniRead, RAM, Resources\RAM.ini, 1
 					}
                 if WinExist("SETUP")
 				WinClose
-                MsgBox, Java versiyonu başarıyla değiştirildi!
+                MsgBox, Ayarlar başarıyla değiştirildi!
+				Goto, Start
 				}
 				else{
 				Goto, start1
@@ -311,5 +337,23 @@ IniRead, RAM, Resources\RAM.ini, 1
 }
 else {
     MsgBox, Lütfen öncelikle kurunuz.
+	return
 }
 ExitApp
+ButtonSıfırla:
+Gui, Cancel
+FileRemoveDir, UltimMC, 1
+FileRemoveDir, Resources, 1
+MsgBox, Başarıyla sıfırlandı!
+Goto, Start
+ExitApp
+ButtonOyunKlasörü:
+if FileExist("Resources\Installed.ini") {
+IniRead, Link, Resources\Link.ini, 1
+Run, UltimMC\instances\%Link%\.minecraft\
+return
+}
+else {
+    MsgBox, Lütfen öncelikle kurunuz.
+	return
+}
