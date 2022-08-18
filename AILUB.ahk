@@ -8,10 +8,11 @@ Gui, Add, Text,, Lütfen yapacağınız işlemi aşağıdan seçiniz.
 Gui, Add, Button, default, Çalıştır
 Gui, Add, Button, , Güncelle
 Gui, Add, Button, , Kur
+Gui, Add, Button, , AyarÇek
 Gui, Add, Button,  x104 y25, Ayarlar
 Gui, Add, Button, , OyunKlasörü
 Gui, Add, Button, , Sıfırla
-Gui, Add, Button, x10 y110 w200 h24 cFFFF66, İptal
+Gui, Add, Button, , İptal
 Gui, Show, , AILUB
 return
 GuiClose:
@@ -367,3 +368,13 @@ else {
     MsgBox, Lütfen öncelikle kurunuz.
 	return
 }
+ButtonAyarÇek:
+Gui, Cancel
+MsgBox, 4, , .minecraft'taki ayarlarınızı AILUB'a aktarmak ister misiniz?
+IfMsgBox Yes 
+Goto, ayrlr
+else
+Goto, Start
+ayrlr:
+FileCopy, %A_AppData%\.minecraft\options.txt, UltimMC\instances\3Qvmya5\.minecraft\options.txt, 1
+Goto, Start
