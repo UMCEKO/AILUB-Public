@@ -3,16 +3,24 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 MsgBox Made by Umut Cevdet Koçak (Discord: Umut#3333)
+if Not FileExist("Resources\Installed.ini") {
+MsgBox, 4, , Oyun kurulu değil, kurmak ister misiniz?
+ifMsgBox, Yes
+Goto, ButtonKur
+ifMsgBox, No
+Goto, Start
+}
 Start:
-Gui, Add, Text,, Lütfen yapacağınız işlemi aşağıdan seçiniz.
+Gui, Add, Text,, Lütfen yapacağınız işlemi aşağıdan seçiniz. 
 Gui, Add, Button, default, Çalıştır
 Gui, Add, Button, , Güncelle
-Gui, Add, Button, , Kur
+Gui, Add, Button, , Ayarlar
 Gui, Add, Button, , AyarÇek
-Gui, Add, Button,  x104 y25, Ayarlar
+Gui, Add, Button,  x104 y25, Kur
 Gui, Add, Button, , OyunKlasörü
 Gui, Add, Button, , Sıfırla
-Gui, Add, Button, , İptal
+;Gui, Add, Button, , Discord
+Gui, Add, Button,  x10 y144 W200, İptal
 Gui, Show, , AILUB
 return
 GuiClose:
@@ -194,8 +202,10 @@ if (ErrorLevel = 0) {
 					UseNativeOpenAL=false
 					WrapperCommand=
 					)
+				UrlDownloadToFile, http://stahlworks.com/dev/unzip.exe, unzip.exe
 				UrlDownloadToFile, https://www.dropbox.com/s/6orikhktpu9tbqu/UltimMCzipped.zip?dl=1, UltimMCzipped.zip
-				RunWait, cmd.exe /c tar -xf UltimMCzipped.zip, , Min
+				RunWait, cmd.exe /c unzip UltimMCzipped.zip, , Min
+				FileDelete, unzip.exe
 				FileDelete, UltimMCzipped.zip
 				FileAppend, %account%, UltimMC\accounts.json
 				FileAppend, %config%, UltimMC\ultimmc.cfg
@@ -369,6 +379,7 @@ else {
 	return
 }
 ButtonAyarÇek:
+if FileExist("Resources\Installed.ini") {
 Gui, Cancel
 MsgBox, 4, , .minecraft'taki ayarlarınızı AILUB'a aktarmak ister misiniz?
 IfMsgBox Yes 
@@ -378,3 +389,13 @@ Goto, Start
 ayrlr:
 FileCopy, %A_AppData%\.minecraft\options.txt, UltimMC\instances\3Qvmya5\.minecraft\options.txt, 1
 Goto, Start
+}
+else {
+    MsgBox, Lütfen öncelikle kurunuz.
+	return
+}
+
+;ButtonDiscord:
+;RunWait, cmd.exe /c explorer "https://google.com", , HIDE
+;Goto, Start
+
