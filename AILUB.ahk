@@ -68,7 +68,7 @@ FileRemoveDir, files\mods, 1
 FileRemoveDir, files\config, 1
 FileRemoveDir, files\defaultconfigs, 1
 FileRemoveDir, files\packmenu, 1
-FileRemoveDir, files\.slpassword, 1
+FileRemoveDir, files\.sl_password, 1
 FileRemoveDir, UltimMC\instances, 1
 run, cmd.exe /c title SETUP && UltimMC\UltimMC --import https://www.bit.ly/%Update%, , Min
 instance:
@@ -88,7 +88,7 @@ if WinExist("SETUP")
 FileDelete, Resources\Link.ini
 IniWrite, %Update%, Resources\Link.ini, 1
 FileCopyDir, files, UltimMC\instances\%Update%\.minecraft, 1
-FileCopy, .sl_password, UltimMC\instances\%Update%\.minecraft\.slpassword, 1
+FileCopy, .sl_password, UltimMC\instances\%Update%\.minecraft\.sl_password, 1
 FileRemoveDir, files, 1
 
 MsgBox Güncelleme tamamlandı
@@ -234,7 +234,7 @@ if (ErrorLevel = 0) {
 					IniWrite, %Link%, Resources\Link.ini, 1
 					IniWrite, true, Resources\Installed.ini, 1
 					FileAppend, %pass%, Resources\.sl_password
-					FileCopy, Resources\.sl_password, UltimMC\instances\%Link%\.minecraft\.slpassword
+					FileCopy, Resources\.sl_password, UltimMC\instances\%Link%\.minecraft\.sl_password
 					if FileExist("UltimMC\instances\" Link) {
 					MsgBox Başarıyla kuruldu.
 					Goto, Start
