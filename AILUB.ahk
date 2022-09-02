@@ -11,13 +11,13 @@ database = https://github.com/umut25/databasetest/raw/main/KC2.ini
 ; Enable the discord button? (default: enablediscord = true)
 enablediscord = true
 ; Your discord adress
-discord = https://discord.gg/BA6sSc2WKX
+discord = https://discord.gg/kGVTHS24ch
 ; Recommended ram for your pack
 recram = 2000
 ; Enable Custom ip's? (default: enablecustomip = false)
 enablecustomip = false
 ; Custom ip that AILUB will connect when the game starts
-customip = play.lightspeeds.tk
+customip = oculeth.knightcraft.cf
 ; Name of the launcher
 launchername = AILUB
 ; Auto start when the game gets installed? (default: autostart = false)
@@ -271,17 +271,13 @@ RegRead, Hostnm, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\Tcpip\Para
 					Sleep, 100
 					if WinExist("ahk_exe UltimMC.exe")
 					WinClose, ahk_exe UltimMC.exe
-					FileDelete, Resources\Name.ini
-					FileDelete, Resources\Link.ini
-					FileDelete, Resources\RAM.ini
-					FileDelete, Resources\.sl_password
                     FileCreateDir, Resources
 					IniWrite, %RAM%, Resources\RAM.ini, 1
 					IniWrite, %Name%, Resources\Name.ini, 1
 					IniWrite, %kod%, Resources\Link.ini, 1
 					IniWrite, true, Resources\Installed.ini, 1
 					FileAppend, %pass%, Resources\.sl_password
-					FileCopy, Resources\.sl_password, UltimMC\instances\%Link%\.minecraft\.slpassword
+					FileCopy, Resources\.sl_password, UltimMC\instances\%kod%\.minecraft\.slpassword
 					if FileExist("UltimMC\instances\" Link) {
 					if(autostart == "false"){
 					MsgBox, Başarıyla kuruldu!
