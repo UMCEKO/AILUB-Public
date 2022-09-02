@@ -36,6 +36,7 @@ if FileExist("Resources\Installed.ini"){
 IniRead, Link, Resources\Link.ini, 1
 UrlDownloadToFile, %database%, updchk.ini
 IniRead, updkod, updchk.ini, 1
+FileDelete, updchk.ini
 if NOT (updkod == Link) {
 	MsgBox, 4, , Oyun güncel değil, güncellemek ister misiniz?
 	ifMsgBox, Yes
