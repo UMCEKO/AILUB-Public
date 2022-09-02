@@ -32,6 +32,7 @@ if Not FileExist("Resources\Installed.ini") {
 	ifMsgBox, No
 	Goto, Start
 }
+if FileExist("Resources\Installed.ini"){
 IniRead, Link, Resources\Link.ini, 1
 UrlDownloadToFile, %database%, updchk.ini
 IniRead, updkod, updchk.ini, 1
@@ -41,7 +42,7 @@ if NOT (updkod == Link) {
 	Goto, ButtonGüncelle
 	ifMsgBox, No
 	Goto, Start
-
+}
 }
 Start:
 Gui, Add, Text,, Lütfen yapacağınız işlemi aşağıdan seçiniz. 
