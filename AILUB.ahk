@@ -24,14 +24,24 @@ launchername = AILUB
 autostart = false
 
 
-
 MsgBox, ,%launchername% ,Made by Umut Cevdet Koçak (Discord: Umut#3333)
 if Not FileExist("Resources\Installed.ini") {
-MsgBox, 4, , Oyun kurulu değil, kurmak ister misiniz?
-ifMsgBox, Yes
-Goto, ButtonKur
-ifMsgBox, No
-Goto, Start
+	MsgBox, 4, , Oyun kurulu değil, kurmak ister misiniz?
+	ifMsgBox, Yes
+	Goto, ButtonKur
+	ifMsgBox, No
+	Goto, Start
+}
+IniRead, Link, Resources\Link.ini, 1
+UrlDownloadToFile, %database%, updchk.ini
+IniRead, updkod, updchk.ini, 1
+if NOT (updkod == Link) {
+	MsgBox, 4, , Oyun güncel değil, güncellemek ister misiniz?
+	ifMsgBox, Yes
+	Goto, ButtonGüncelle
+	ifMsgBox, No
+	Goto, Start
+
 }
 Start:
 Gui, Add, Text,, Lütfen yapacağınız işlemi aşağıdan seçiniz. 
