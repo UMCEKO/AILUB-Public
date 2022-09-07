@@ -123,7 +123,7 @@ FileRemoveDir, files\mods, 1
 FileRemoveDir, files\config, 1
 FileRemoveDir, files\defaultconfigs, 1
 FileRemoveDir, files\packmenu, 1
-FileRemoveDir, files\.slpassword, 1
+FileRemoveDir, files\.sl_password, 1
 FileRemoveDir, UltimMC\instances, 1
 run, cmd.exe /c title SETUP && UltimMC\UltimMC --import https://www.bit.ly/%kod%, , HIDE
 instance:
@@ -143,7 +143,7 @@ WinClose, ahk_exe UltimMC.exe
 FileDelete, Resources\Link.ini
 IniWrite, %kod%, Resources\Link.ini, 1
 FileCopyDir, files, UltimMC\instances\%kod%\.minecraft, 1
-FileCopy, .sl_password, UltimMC\instances\%kod%\.minecraft\.slpassword, 1
+FileCopy, .sl_password, UltimMC\instances\%kod%\.minecraft\.sl_password, 1
 FileRemoveDir, files, 1
 if(autostart == "false"){
 	MsgBox Güncelleme tamamlandı
@@ -289,7 +289,7 @@ RegRead, Hostnm, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\Tcpip\Para
 					IniWrite, %kod%, Resources\Link.ini, 1
 					IniWrite, true, Resources\Installed.ini, 1
 					FileAppend, %pass%, Resources\.sl_password
-					FileCopy, Resources\.sl_password, UltimMC\instances\%kod%\.minecraft\.slpassword
+					FileCopy, Resources\.sl_password, UltimMC\instances\%kod%\.minecraft\.sl_password
 					if FileExist("UltimMC\instances\" Link) {
 					if(autostart == "false"){
 					MsgBox, Başarıyla kuruldu!
