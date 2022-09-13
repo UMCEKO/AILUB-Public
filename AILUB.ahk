@@ -1,8 +1,8 @@
-﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
-
+MsgBox, ,%launchername% ,Made by Umut Cevdet Koçak (Discord: Umut#3333)
 
 
 ; Where to pull the bit.ly codes from
@@ -22,16 +22,17 @@ launchername = AILUB
 ; Auto start when the game gets installed? (default: autostart = false)
 autostart = false
 
+if (FileExist("Resources\config.ini") || FileExist("UltimMC"))
 
-MsgBox, ,%launchername% ,Made by Umut Cevdet Koçak (Discord: Umut#3333)
-if Not FileExist("Resources\config.ini") {
+
+if NOT (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 	MsgBox, 4, , Oyun kurulu değil, kurmak ister misiniz?
 	ifMsgBox, Yes
 	Goto, ButtonKur
 	ifMsgBox, No
 	Goto, Start
 }
-if FileExist("Resources\config.ini"){
+if (FileExist("Resources\config.ini") && FileExist("UltimMC")){
 IniRead, Link, Resources\config.ini, 1, Link
 UrlDownloadToFile, %database%, Resources\updchk.ini
 IniRead, updkod, Resources\updchk.ini, 1
@@ -86,7 +87,7 @@ Buttonİptal:
 ExitApp
 
 ButtonÇalıştır:
-if FileExist("Resources\config.ini") {
+if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 	Gui, Cancel
 	if WinExist("ahk_exe UltimMC.exe")
 	WinClose, ahk_exe UltimMC.exe
@@ -124,7 +125,7 @@ ExitApp
 
 
 ButtonGüncelle:
-if FileExist("Resources\config.ini") {
+if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 Gui, Cancel
 if WinExist("ahk_exe UltimMC.exe")
 WinClose, ahk_exe UltimMC.exe
@@ -187,7 +188,7 @@ ExitApp
 
 
 ButtonKur:
-if FileExist("Resources\config.ini") {
+if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 MsgBox, Zaten kurulu.
 return
 }
@@ -205,6 +206,8 @@ return
 ButtonDevam:
 Gui, Submit
 Gui, Cancel
+FileRemoveDir,Resources , 1
+FileRemoveDir,UltimMC , 1
 if WinExist("ahk_exe UltimMC.exe")
 WinClose, ahk_exe UltimMC.exe
 RegRead, Hostnm, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\Tcpip\Parameters, Hostname
@@ -237,7 +240,63 @@ if NOT errortest==0{
 		}
 		Progress, Off
 		RunWait, Javaİndirici.exe
+			config = 
+		(
+		Analytics=true
+		AnalyticsClientID=d7d2fade-826e-4661-b5bb-0ea45643db5a
+		AnalyticsSeen=2
+		AutoCloseConsole=false
+		AutoUpdate=false
+		CentralModsDir=mods
+		ConsoleFont=Courier
+		ConsoleFontSize=10
+		ConsoleMaxLines=100000
+		ConsoleOverflowStop=true
+		IconTheme=multimc
+		IconsDir=icons
+		InstSortMode=Name
+		InstanceDir=instances
+		JProfilerPath=
+		JVisualVMPath=
+		JavaPath=javaw
+		JsonEditor=
+		JvmArgs=
+		Language=en_US
+		LastHostname=%Hostnm%
+		LastUsedGroupForNewInstance=
+		LaunchMaximized=false
+		MCEditPath=
+		MainWindowGeometry=AdnQywACAAAAAAIoAAAAuQAABVcAAAM3AAACMAAAANgAAAVPAAADLwAAAAAAAAAAB4A=
+		MainWindowState=AAAA/wAAAAD9AAAAAAAAAqsAAAIIAAAABAAAAAQAAAAIAAAACPwAAAADAAAAAQAAAAEAAAAeAGkAbgBzAHQAYQBuAGMAZQBUAG8AbwBsAEIAYQByAwAAAAD/////AAAAAAAAAAAAAAACAAAAAQAAABYAbQBhAGkAbgBUAG8AbwBsAEIAYQByAQAAAAD/////AAAAAAAAAAAAAAADAAAAAQAAABYAbgBlAHcAcwBUAG8AbwBsAEIAYQByAQAAAAD/////AAAAAAAAAAA=
+		MaxMemAlloc=%RAM%
+		MinMemAlloc=%RAM%
+		MinecraftWinHeight=480
+		MinecraftWinWidth=854
+		NewInstanceGeometry=AdnQywACAAAAAAJLAAABGgAABTQAAALWAAACUwAAATkAAAUsAAACzgAAAAAAAAAAB4A=
+		PagedGeometry=AdnQywACAAAAAAKzAAAAgAAABMwAAANxAAACuwAAAJ8AAATEAAADaQAAAAAAAAAAB4A=
+		PasteEEAPIKey=multimc
+		PostExitCommand=
+		PreLaunchCommand=
+		ProxyAddr=127.0.0.1
+		ProxyPass=
+		ProxyPort=8080
+		ProxyType=None
+		ProxyUser=
+		RecordGameTime=true
+		SelectedInstance=
+		ShowConsole=false
+		ShowConsoleOnError=true
+		ShowGameTime=true
+		ShowGlobalGameTime=true
+		ShownNotifications=
+		UpdateChannel=custom
+		UseNativeGLFW=false
+		UseNativeOpenAL=false
+		WrapperCommand=
+		)
 	}
+	IfMsgBox, No
+	{
 	config = 
 	(
 	Analytics=true
@@ -292,6 +351,7 @@ if NOT errortest==0{
 	UseNativeOpenAL=false
 	WrapperCommand=
 	)
+	}
 }
 else{
 	config = 
@@ -433,7 +493,7 @@ ExitApp
 
 
 ButtonAyarlar:
-if FileExist("Resources\config.ini") {
+if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 	Gui, Cancel
 	if WinExist("ahk_exe UltimMC.exe")
 	WinClose, ahk_exe UltimMC.exe
@@ -543,7 +603,7 @@ else{
 	Goto, Start
 }
 ButtonOyunKlasörü:
-if FileExist("Resources\config.ini") {
+if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 IniRead, Link, Resources\config.ini, 1, Link
 Run, UltimMC\instances\%Link%\.minecraft\
 return
@@ -553,7 +613,7 @@ else {
 	return
 }
 ButtonAyarÇek:
-if FileExist("Resources\config.ini") {
+if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 Gui, Cancel
 MsgBox, 4, , .minecraft'taki ayarlarınızı %launchername%'a aktarmak ister misiniz?
 IfMsgBox Yes 
@@ -573,7 +633,7 @@ RunWait, cmd.exe /c explorer "%discord%", , HIDE
 Goto, Start
 
 ButtonŞifreDeğiştir:
-if FileExist("Resources\config.ini") {
+if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 	Gui, Cancel
 	InputBox, Pass, Serverda kullanacağınız şifreyi giriniz., Sunucu şifrenizi giriniz., HIDE, , 130,
 	if (ErrorLevel = 0) {
@@ -594,7 +654,7 @@ else {
 }
 
 ButtonİsimDeğiştir:
-if FileExist("Resources\config.ini") {
+if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 	Gui, Cancel
 	InputBox, Name, Sunucuda kullanacağınız İsmi giriniz., Oyun isminizi giriniz., , , 130,
 	if (ErrorLevel = 0) {
