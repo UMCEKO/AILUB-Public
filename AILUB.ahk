@@ -22,6 +22,36 @@ launchername = AILUB
 ; Auto start when the game gets installed? (default: autostart = false)
 autostart = false
 
+
+UrlDownloadWithBar(Url,Name)
+{
+WebRequest := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+WebRequest.Open("HEAD", Url)
+WebRequest.Send()
+FinalSize := WebRequest.GetResponseHeader("Content-Length")
+CurrSize=0
+Run, powershell (New-Object Net.WebClient).DownloadFile('%Url%'`, '%A_ScriptDir%\%Name%'),, HIDE
+Progress, On H70
+__UpdateProgressBar:
+While(FinalSize!=CurrSize){
+    FileGetSize, CurrSize, %Name%
+    Percentage := (CurrSize/FinalSize)*100
+    ProgressFinalSize:=Round((FinalSize)/1024)
+    ProgressCurrSize:=Round((CurrSize)/1024)
+    Progress, %Percentage%,%Speed%KB/s %ProgressCurrSize%KB/%ProgressFinalSize%KB `n %Name% indiriliyor
+    Sleep, 100
+    FileGetSize, FutureSize, %Name%
+    Speed:=Round(((FutureSize-CurrSize)*10)/1024)
+}
+Progress, Off
+}
+
+
+
+
+
+
+
 if (FileExist("Resources\config.ini") || FileExist("UltimMC"))
 
 
@@ -219,25 +249,7 @@ if NOT errortest==0{
 	IfMsgBox, Yes
 	{
 		Gui, Cancel
-		if FileExist("Javaİndirici.exe")
-		FileDelete, Javaİndirici.exe
-		WebRequest := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-		WebRequest.Open("HEAD", "https://javadl.oracle.com/webapps/download/AutoDL?BundleId=246808_424b9da4b48848379167015dcc250d8d")
-		WebRequest.Send()
-		FinalSize := WebRequest.GetResponseHeader("Content-Length")
-		CurrSize=0
-		Run, powershell (New-Object Net.WebClient).DownloadFile('https://github.com/umut25/AILUB-Public/releases/download/java/jre-8u341-windows-x64.exe'`, '%A_ScriptDir%\Javaİndirici.exe'),, HIDE
-		Progress, On H100
-		While(FinalSize!=CurrSize){
-			FileGetSize, CurrSize, Javaİndirici.exe
-			Percentage := (CurrSize/FinalSize)*100
-			ProgressFinalSize:=Round((FinalSize)/1024)
-			ProgressCurrSize:=Round((CurrSize)/1024)
-			Progress, %Percentage%,%Speed%KB/s %ProgressCurrSize%KB/%ProgressFinalSize%KB
-			Sleep, 100
-			FileGetSize, FutureSize, Javaİndirici.exe
-			Speed:=Round(((FutureSize-CurrSize)*10)/1024)
-		}
+		UrlDownloadWithBar("https://github.com/umut25/AILUB-Public/releases/download/java/jre-8u341-windows-x64.exe","Javaİndirici.exe")
 		Progress, Off
 		RunWait, Javaİndirici.exe
 			config = 
@@ -429,8 +441,8 @@ account =
     "formatVersion": 3
 }
 					)
-UrlDownloadToFile, http://stahlworks.com/dev/unzip.exe, unzip.exe
-UrlDownloadToFile, https://github.com/umut25/databasetest/raw/main/UltimMCzipped.zip, UltimMCzipped.zip
+UrlDownloadWithBar("http://stahlworks.com/dev/unzip.exe", "unzip.exe")
+UrlDownloadWithBar("https://github.com/umut25/databasetest/raw/main/UltimMCzipped.zip", "UltimMCzipped.zip")
 if NOT FileExist("%A_ScriptDir%\Resources")
 FileCreateDir, Resources
 UrlDownloadToFile, %database%, Resources\kod.ini
@@ -585,6 +597,48 @@ else {
 	return
 }
 ExitApp
+ButtonİsimDeğiştir:
+if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
+	Gui, Cancel
+	InputBox, Name, Sunucuda kullanacağınız İsmi giriniz., Oyun isminizi giriniz., , , 130,
+	if (ErrorLevel = 0) {
+
+		account = 
+					(
+{
+    "accounts": [
+        {
+            "active": true,
+            "type": "dummy",
+            "ygg": {
+                "extra": {
+                    "clientToken": "e2311a087cc841cfa6024f7f6966594e",
+                    "userName": "%Name%"
+                },
+                "iat": 1655279002,
+                "token": "%Name%"
+            }
+        }
+    ],
+    "formatVersion": 3
+}
+					)
+		FileDelete, UltimMC\accounts.json
+		FileAppend, %account%, UltimMC\accounts.json
+		IniWrite, %Name%, Resources\config.ini, 1, Name
+		Goto, Start
+	
+		}
+	else {
+		Goto, Start
+	}
+
+}
+else {
+    MsgBox, Lütfen öncelikle kurunuz.
+	return
+}
+
 ButtonSıfırla:
 Gui, Cancel
 if WinExist("ahk_exe UltimMC.exe")
@@ -653,68 +707,9 @@ else {
 	return
 }
 
-ButtonİsimDeğiştir:
-if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
-	Gui, Cancel
-	InputBox, Name, Sunucuda kullanacağınız İsmi giriniz., Oyun isminizi giriniz., , , 130,
-	if (ErrorLevel = 0) {
-
-		account = 
-					(
-{
-    "accounts": [
-        {
-            "active": true,
-            "type": "dummy",
-            "ygg": {
-                "extra": {
-                    "clientToken": "e2311a087cc841cfa6024f7f6966594e",
-                    "userName": "%Name%"
-                },
-                "iat": 1655279002,
-                "token": "%Name%"
-            }
-        }
-    ],
-    "formatVersion": 3
-}
-					)
-		FileDelete, UltimMC\accounts.json
-		FileAppend, %account%, UltimMC\accounts.json
-		IniWrite, %Name%, Resources\config.ini, 1, Name
-		Goto, Start
-	
-		}
-	else {
-		Goto, Start
-	}
-
-}
-else {
-    MsgBox, Lütfen öncelikle kurunuz.
-	return
-}
 ButtonJavaKurulum:
 Gui, Cancel
-if FileExist("Javaİndirici.exe")
 FileDelete, Javaİndirici.exe
-WebRequest := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-WebRequest.Open("HEAD", "https://javadl.oracle.com/webapps/download/AutoDL?BundleId=246808_424b9da4b48848379167015dcc250d8d")
-WebRequest.Send()
-FinalSize := WebRequest.GetResponseHeader("Content-Length")
-CurrSize=0
-Run, powershell (New-Object Net.WebClient).DownloadFile('https://github.com/umut25/AILUB-Public/releases/download/java/jre-8u341-windows-x64.exe'`, '%A_ScriptDir%\Javaİndirici.exe'),, HIDE
-Progress, On H100
-While(FinalSize!=CurrSize){
-FileGetSize, CurrSize, Javaİndirici.exe
-Percentage := (CurrSize/FinalSize)*100
-ProgressFinalSize:=Round((FinalSize)/1024)
-ProgressCurrSize:=Round((CurrSize)/1024)
-Progress, %Percentage%,%Speed%KB/s %ProgressCurrSize%KB/%ProgressFinalSize%KB
-Sleep, 100
-FileGetSize, FutureSize, Javaİndirici.exe
-Speed:=Round(((FutureSize-CurrSize)*10)/1024)
-}
-Progress, Off
+UrlDownloadWithBar("https://javadl.oracle.com/webapps/download/AutoDL?BundleId=246808_424b9da4b48848379167015dcc250d8d", "Javaİndirici.exe")
 RunWait, Javaİndirici.exe
 Goto, Start
