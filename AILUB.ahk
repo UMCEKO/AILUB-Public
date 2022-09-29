@@ -47,14 +47,6 @@ Progress, Off
 }
 
 
-
-
-
-
-
-if (FileExist("Resources\config.ini") || FileExist("UltimMC"))
-
-
 if NOT (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 	MsgBox, 4, , Oyun kurulu değil, kurmak ister misiniz?
 	ifMsgBox, Yes
@@ -65,9 +57,9 @@ if NOT (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 if (FileExist("Resources\config.ini") && FileExist("UltimMC")){
 IniRead, Link, Resources\config.ini, 1, Link
 UrlDownloadToFile, %database%, Resources\updchk.ini
-IniRead, updkod, Resources\updchk.ini, 1
+FileRead, updkod, Resources\updchk.ini
 FileDelete, Resources\updchk.ini
-if NOT (updkod == Link) {
+if (updkod != Link) {
 	MsgBox, 4, , Oyun güncel değil, güncellemek ister misiniz?
 	ifMsgBox, Yes
 	Goto, ButtonGüncelle
@@ -160,7 +152,7 @@ Gui, Cancel
 if WinExist("ahk_exe UltimMC.exe")
 WinClose, ahk_exe UltimMC.exe
 UrlDownloadToFile, %database%, Resources\kod.ini
-IniRead, kod, Resources\kod.ini, 1, 
+FileRead, kod, Resources\kod.ini 
 FileDelete, Resources\kod.ini
 IniWrite, %kod%, Resources\config.ini, 1, kod
 IniRead, Link, Resources\config.ini, 1, Link
@@ -252,6 +244,7 @@ if NOT errortest==0{
 		UrlDownloadWithBar("https://github.com/umut25/AILUB-Public/releases/download/java/jre-8u341-windows-x64.exe","Javaİndirici.exe")
 		Progress, Off
 		RunWait, Javaİndirici.exe
+		FileDelete, Javaİndirici.exe
 			config = 
 		(
 		Analytics=true
@@ -446,7 +439,7 @@ UrlDownloadWithBar("https://github.com/umut25/databasetest/raw/main/UltimMCzippe
 if NOT FileExist("%A_ScriptDir%\Resources")
 FileCreateDir, Resources
 UrlDownloadToFile, %database%, Resources\kod.ini
-IniRead, kod, Resources\kod.ini, 1
+FileRead, kod, Resources\kod.ini
 FileDelete, Resources\kod.ini
 IniWrite, %kod%, Resources\config.ini, 1, kod
 RunWait, cmd.exe /c unzip UltimMCzipped.zip, , HIDE
@@ -455,52 +448,37 @@ FileDelete, UltimMCzipped.zip
 FileAppend, %account%, UltimMC\accounts.json
 FileAppend, %config%, UltimMC\ultimmc.cfg
 run, cmd.exe /c title SETUP && UltimMC\UltimMC --import https://www.bit.ly/%kod%, , HIDE
-lang:
-if WinExist("New Instance - UltimMC 5") {
-	Sleep, 100
-	ControlSend, , {Enter}, New Instance - UltimMC 5
-	checkdown:
-	if WinExist("Please wait... - UltimMC 5"){
-	downloading1:
-	if WinExist("Please wait... - UltimMC 5"){
-		Sleep, 100
-		Goto, downloading1
-		}
-	Sleep, 100
-	if WinExist("ahk_exe UltimMC.exe")
-	WinClose, ahk_exe UltimMC.exe
-	FileCreateDir, Resources
-	IniWrite, %RAM%, Resources\config.ini, 1, RAM
-	IniWrite, %Name%, Resources\config.ini, 1, Name
-	IniWrite, %kod%, Resources\config.ini, 1, Link
-	IniWrite, true, Resources\config.ini, 1, Installed
-	IniWrite, %pass%, Resources\config.ini, 1, Password
-	IniWrite, %customip%, Resources\config.ini, 1, ip
-	FileAppend, %pass%, UltimMC\instances\%kod%\.minecraft\.sl_password
-	if FileExist("UltimMC\instances\" Link) {
-		if(autostart == "false"){
-		MsgBox, Başarıyla kuruldu!
-		Goto, Start
-		}
-		else if(autostart == "true"){
-		Goto, ButtonÇalıştır
-		}
-		else{
-			MsgBox, Variable error!
-		}
-	}
-	Else {
-	MsgBox, Kurulum Başarısız.
-	Goto, ButtonSıfırla
-	}}
-else{
-	Sleep, 100
-	Goto, checkdown
-}}
-else {
-	Goto, lang
 
+WinWait,New Instance - UltimMC 5
+Sleep, 100
+ControlSend, , {Enter}, New Instance - UltimMC 5
+WinWait Please wait... - UltimMC 5
+WinWaitClose Please wait... - UltimMC 5
+WinClose, ahk_exe UltimMC.exe
+FileCreateDir, Resources
+IniWrite, %RAM%, Resources\config.ini, 1, RAM
+IniWrite, %Name%, Resources\config.ini, 1, Name
+IniWrite, %kod%, Resources\config.ini, 1, Link
+IniWrite, true, Resources\config.ini, 1, Installed
+IniWrite, %pass%, Resources\config.ini, 1, Password
+IniWrite, %customip%, Resources\config.ini, 1, ip
+FileAppend, %pass%, UltimMC\instances\%kod%\.minecraft\.sl_password
+if FileExist("UltimMC\instances\" Link) {
+	if(autostart == "false"){
+	MsgBox, Başarıyla kuruldu!
+	Goto, Start
 	}
+	else if(autostart == "true"){
+	Goto, ButtonÇalıştır
+	}
+	else{
+		MsgBox, Variable error!
+	}
+}
+Else {
+MsgBox, Kurulum Başarısız.
+Goto, ButtonSıfırla
+}
 ExitApp
 
 
@@ -568,29 +546,12 @@ if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 	FileDelete, UltimMC\ultimmc.cfg
 	FileAppend, %config%, UltimMC\ultimmc.cfg
 	run, cmd.exe /c title SETUP && UltimMC\UltimMC, , HIDE
-	start1:
-	if WinExist("UltimMC Quick Setup - UltimMC 5"){
-		start2:
-		Sleep, 100
-		if WinExist("UltimMC Quick Setup - UltimMC 5"){
-			Goto, start2
-		}
-		else{
-			start3:
-			if WinExist("UltimMC 5 - Version 0.7.0-custom on win32 - UltimMC 5"){
-				WinClose, ahk_exe UltimMC.exe
-				MsgBox, Ayarlar başarıyla değiştirildi!
-				Goto, Start
-			}
-			else{
-				Sleep, 100
-				Goto, start3
-			}
-		}
-	}
-	else{
-	Goto, start1
-	}
+	WinWait, UltimMC Quick Setup - UltimMC 5
+	WinWaitClose, UltimMC Quick Setup - UltimMC 5
+	WinWait, UltimMC 5 - Version 0.7.0-custom on win32 - UltimMC 5
+	WinClose, ahk_exe UltimMC.exe
+	MsgBox, Ayarlar başarıyla değiştirildi!
+	Goto, Start
 }
 else {
     MsgBox, Lütfen öncelikle kurunuz.
@@ -707,9 +668,10 @@ else {
 	return
 }
 
+
 ButtonJavaKurulum:
 Gui, Cancel
-FileDelete, Javaİndirici.exe
 UrlDownloadWithBar("https://javadl.oracle.com/webapps/download/AutoDL?BundleId=246808_424b9da4b48848379167015dcc250d8d", "Javaİndirici.exe")
 RunWait, Javaİndirici.exe
+FileDelete, Javaİndirici.exe
 Goto, Start
