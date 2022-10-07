@@ -6,13 +6,15 @@ MsgBox, ,%launchername% ,Made by Umut Cevdet Koçak (Discord: Umut#3333)
 
 
 ; Where to pull the bit.ly codes from
-database = https://github.com/umut25/databasetest/raw/main/KC2.ini
+database = https://raw.githubusercontent.com/umut25/AILUBModpackDB/main/KC2.txt
 ; Enable the discord button? (default: enablediscord = true)
 enablediscord = true
 ; Your discord adress
 discord = https://discord.gg/kGVTHS24ch
 ; Recommended ram for your pack
 recram = 2000
+; Do you want your players to use simplelogin passwords?
+reqpass = false
 ; Enable Custom ip's? (default: enablecustomip = false)
 enablecustomip = false
 ; Custom ip that the launcher will connect when the game starts
@@ -90,7 +92,9 @@ Gui, Add, Button, , Ayarlar
 Gui, Add, Button, , OyunKlasörü
 Gui, Add, Button, , İsimDeğiştir
 Gui, Add, Button,  x104 y53, AyarÇek
+if (reqpass==true){
 Gui, Add, Button, , ŞifreDeğiştir
+}
 Gui, Add, Button, , JavaKurulum
 Gui, Add, Button, x23 y140 W200, İptal
 
@@ -161,7 +165,9 @@ FileRemoveDir, files\mods, 1
 FileRemoveDir, files\config, 1
 FileRemoveDir, files\defaultconfigs, 1
 FileRemoveDir, files\packmenu, 1
+if (reqpass==true){
 FileDelete, files\.sl_password
+}
 FileRemoveDir, UltimMC\instances, 1
 run, cmd.exe /c title SETUP && UltimMC\UltimMC --import https://www.bit.ly/%kod%, , HIDE
 instance:
@@ -179,9 +185,11 @@ if WinExist("ahk_exe UltimMC.exe")
 WinClose, ahk_exe UltimMC.exe
 IniWrite, %kod%, Resources\config.ini, 1, Link
 FileCopyDir, files, UltimMC\instances\%kod%\.minecraft, 1
+if (reqpass==true){
 IniRead, pass, Resources\config.ini, 1, Password
 FileDelete, UltimMC\instances\%kod%\.minecraft\.sl_password
 FileAppend, %pass%, UltimMC\instances\%kod%\.minecraft\.sl_password
+}
 FileRemoveDir, files, 1
 if(autostart == "false"){
 	MsgBox Güncelleme tamamlandı
@@ -218,8 +226,10 @@ Gui, Cancel
 Gui, New
 Gui, Add, Text,, Oyundaki adınızı giriniz:
 Gui, Add, Edit, vName, 
+if (reqpass==true){
 Gui, Add, Text,, Oyundaki şifrenizi giriniz:
 Gui, Add, Edit,Password vPass,
+}
 Gui, Add, Text,, Oyuna vereceğiniz bellek`nmiktarını MB cinsinden giriniz:
 Gui, Add, Edit,W121 vRAM, %recram%
 Gui, Add, Button,Default W121, Devam
@@ -236,7 +246,7 @@ RegRead, Hostnm, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\Tcpip\Para
 RegRead, Java8Path, HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Runtime Environment\1.8, JavaHome
 errortest=%ErrorLevel%
 StringReplace, Java8, Java8Path, \ , /, All
-if NOT errortest==0{
+if (errortest!=0 || !FileExist(Java8Path " \bin\javaw.exe")){
 	MsgBox, 4,,Uyarı! Sizde java 8 bulunmamaktadır. Java yüklemek ister misiniz?,
 	IfMsgBox, Yes
 	{
@@ -245,6 +255,13 @@ if NOT errortest==0{
 		Progress, Off
 		RunWait, Javaİndirici.exe
 		FileDelete, Javaİndirici.exe
+		RegRead, Java8Path, HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Runtime Environment\1.8, JavaHome
+		errortest=%ErrorLevel%
+		StringReplace, Java8, Java8Path, \ , /, All
+		if (errortest!=0 || !FileExist(Java8Path "\bin\javaw.exe")){
+			MsgBox, Java kurulumu başarısız
+			Exit
+		}
 			config = 
 		(
 		Analytics=true
@@ -436,7 +453,7 @@ account =
 					)
 UrlDownloadWithBar("http://stahlworks.com/dev/unzip.exe", "unzip.exe")
 UrlDownloadWithBar("https://github.com/umut25/databasetest/raw/main/UltimMCzipped.zip", "UltimMCzipped.zip")
-if NOT FileExist("%A_ScriptDir%\Resources")
+if NOT FileExist(A_ScriptDir "\Resources")
 FileCreateDir, Resources
 UrlDownloadToFile, %database%, Resources\kod.ini
 FileRead, kod, Resources\kod.ini
@@ -455,14 +472,19 @@ ControlSend, , {Enter}, New Instance - UltimMC 5
 WinWait Please wait... - UltimMC 5
 WinWaitClose Please wait... - UltimMC 5
 WinClose, ahk_exe UltimMC.exe
+if WinExist("ahk_exe UltimMC.exe")
 FileCreateDir, Resources
 IniWrite, %RAM%, Resources\config.ini, 1, RAM
 IniWrite, %Name%, Resources\config.ini, 1, Name
 IniWrite, %kod%, Resources\config.ini, 1, Link
 IniWrite, true, Resources\config.ini, 1, Installed
+if (reqpass==true){
 IniWrite, %pass%, Resources\config.ini, 1, Password
+}
 IniWrite, %customip%, Resources\config.ini, 1, ip
+if (reqpass==true){
 FileAppend, %pass%, UltimMC\instances\%kod%\.minecraft\.sl_password
+}
 if FileExist("UltimMC\instances\" Link) {
 	if(autostart == "false"){
 	MsgBox, Başarıyla kuruldu!
