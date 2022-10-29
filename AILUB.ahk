@@ -6,73 +6,166 @@ MsgBox, ,%launchername% ,Made by Umut Cevdet Koçak (Discord: Umut#3333)
 
 
 ; Where to pull the bit.ly codes from
-database = https://raw.githubusercontent.com/umut25/AILUBModpackDB/main/KC2.txt
+database = https://raw.githubusercontent.com/umut25/AILUBModpackDB/main/AllTheMods8.txt
 ; Enable the discord button? (default: enablediscord = true)
-enablediscord = true
+enablediscord = false
 ; Your discord adress
 discord = https://discord.gg/kGVTHS24ch
 ; Recommended ram for your pack
-recram = 2000
+recram = 8192
 ; Do you want your players to use simplelogin passwords?
 reqpass = false
 ; Enable Custom ip's? (default: enablecustomip = false)
-enablecustomip = false
+enablecustomip = true
 ; Custom ip that the launcher will connect when the game starts
-customip = oculeth.knightcraft.cf
+customip = 193.35.154.49:25565
 ; Name of the launcher
-launchername = AILUB
+launchername = ATM8
 ; Auto start when the game gets installed? (default: autostart = false)
 autostart = false
+;Which java version to use? (options; 8,17+)
+defjava = 17
 
 
 UrlDownloadWithBar(Url,Name)
 {
-WebRequest := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-WebRequest.Open("HEAD", Url)
-WebRequest.Send()
-FinalSize := WebRequest.GetResponseHeader("Content-Length")
-CurrSize=0
-Run, powershell (New-Object Net.WebClient).DownloadFile('%Url%'`, '%A_ScriptDir%\%Name%'),, HIDE
-Progress, On H70
-__UpdateProgressBar:
-While(FinalSize!=CurrSize){
-    FileGetSize, CurrSize, %Name%
-    Percentage := (CurrSize/FinalSize)*100
-    ProgressFinalSize:=Round((FinalSize)/1024)
-    ProgressCurrSize:=Round((CurrSize)/1024)
-    Progress, %Percentage%,%Speed%KB/s %ProgressCurrSize%KB/%ProgressFinalSize%KB `n %Name% indiriliyor
-    Sleep, 100
-    FileGetSize, FutureSize, %Name%
-    Speed:=Round(((FutureSize-CurrSize)*10)/1024)
-}
-Progress, Off
+	While(){
+		if FileExist(Name){
+			MsgBox, 4,,Kurulum yerinde %Name% isimli dosya bulunmaktadır kurulumun devam edebilmesi için bu dosyanın silinmesi gerekmektedir. Silinsin mi?
+			IfMsgBox, Yes
+			FileDelete, %Name%
+			IfMsgBox, No
+			ExitApp
+		}
+		else{
+			Break
+		}
+	}
+	WebRequest := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+	WebRequest.Open("HEAD", Url)
+	WebRequest.Send()
+	FinalSize := WebRequest.GetResponseHeader("Content-Length")
+	CurrSize=0
+	Run, powershell (New-Object Net.WebClient).DownloadFile('%Url%'`, '%A_ScriptDir%\%Name%'),, HIDE
+	Progress, On H70
+	__UpdateProgressBar:
+	While(FinalSize!=CurrSize){
+		FileGetSize, CurrSize, %Name%
+		Percentage := (CurrSize/FinalSize)*100
+		ProgressFinalSize:=Round((FinalSize)/1024)
+		ProgressCurrSize:=Round((CurrSize)/1024)
+		Progress, %Percentage%,%Speed%KB/s %ProgressCurrSize%KB/%ProgressFinalSize%KB `n %Name% indiriliyor
+		Sleep, 200
+		FileGetSize, FutureSize, %Name%
+		Speed:=Round(((FutureSize-CurrSize)*5)/1024)
+	}
+	Progress, Off
 }
 
+
+if NOT FileExist("Resources\config.ini"){
+FileCreateDir, Resources
+FileAppend,,Resources\config.ini
+}
+UrlDownloadToFile, %database%, Resources\NewVer.txt
+if(ErrorLevel==1){
+	MsgBox, İnternetiniz yoktur!
+	Goto, Start
+}
+FileRead,NewVer,Resources\NewVer.txt
+IniWrite, %NewVer%, Resources\config.ini, 1, NewVerTemp
+FileDelete, Resources\NewVer.txt
+IniRead, NewVer, Resources\config.ini, 1, NewVerTemp
+
+LoopW=1
+While(LoopW==1){
+	JavaPathRaw:=""
+	if(defjava==8){
+        RegRead, JavaPathRaw, HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Runtime Environment\1.8, JavaHome
+        if(ErrorLevel==1){
+            MsgBox, 4,,Uyarı! Sizde java 8 bulunmamaktadır. Java yüklemek ister misiniz?,
+            IfMsgBox, Yes
+            MBOX=Yes
+            if(MBOX==Yes){
+                Gui, Cancel
+                UrlDownloadWithBar("https://github.com/umut25/AILUB-Public/releases/download/java/jre-8u341-windows-x64.exe","Javaİndirici.exe")
+                RunWait, Javaİndirici.exe
+                FileDelete, Javaİndirici.exe
+            }
+			else{
+				JavaPath:=""
+			}
+        }
+        else{
+            LoopW=0
+        }
+    }
+	else if(defjava>=17){
+		RegRead, JDKCV, HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\JDK, CurrentVersion
+		if(ErrorLevel==0){
+			StringLeft, JDKTCV, JDKCV, 2
+			if(JDKTCV<17){
+				MsgBox, 4,,Uyarı! Sizde java 17 ve üstü bulunmamaktadır. Java yüklemek ister misiniz?,
+				IfMsgBox, Yes
+				MBOX=Yes
+				if(MBOX=="Yes"){
+					UrlDownloadWithBar("https://github.com/umut25/AILUB-Public/releases/download/java/jdk-17.0.5_windows-x64_bin.exe","Javaİndirici.exe")
+					RunWait, Javaİndirici.exe
+					FileDelete, Javaİndirici.exe
+				}
+				else{
+					LoopW=0
+					JavaPath:=""
+				}
+			}
+			else if(JDKTCV>=17){
+				RegRead, JavaPathRaw, HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\JDK\%JDKCV%, JavaHome
+			}
+		}
+		else if(ErrorLevel==1){
+				MsgBox, 4,,Uyarı! Sizde java 17 ve üstü bulunmamaktadır. Java yüklemek ister misiniz?,
+				IfMsgBox, Yes
+				MBOX=Yes
+				if(MBOX=="Yes"){
+					UrlDownloadWithBar("https://github.com/umut25/AILUB-Public/releases/download/java/jdk-17.0.5_windows-x64_bin.exe","Javaİndirici.exe")
+					RunWait, Javaİndirici.exe
+					FileDelete, Javaİndirici.exe
+				}
+		}
+	}
+	StringReplace, JavaPathRawE, JavaPathRaw,\,/, All
+	JavaPath=%JavaPathRawE%/bin/javaw.exe
+
+	if(FileExist(JavaPath)){
+		LoopW=0
+	}
+	else if(JavaPathRaw==""){
+	}
+	else{
+		MsgBox, UYARI! JAVANIZ BOZUKTUR!
+		LoopW=0
+	}
+}
 
 if NOT (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 	MsgBox, 4, , Oyun kurulu değil, kurmak ister misiniz?
 	ifMsgBox, Yes
 	Goto, ButtonKur
-	ifMsgBox, No
-	Goto, Start
 }
+
 if (FileExist("Resources\config.ini") && FileExist("UltimMC")){
-IniRead, Link, Resources\config.ini, 1, Link
-UrlDownloadToFile, %database%, Resources\updchk.ini
-FileRead, updkod, Resources\updchk.ini
-FileDelete, Resources\updchk.ini
-if (updkod != Link) {
+IniRead, CurVer, Resources\config.ini, 1, CurVer
+if (NewVer != CurVer) {
 	MsgBox, 4, , Oyun güncel değil, güncellemek ister misiniz?
 	ifMsgBox, Yes
 	Goto, ButtonGüncelle
-	ifMsgBox, No
-	Goto, Start
 }
 }
 if (FileExist("unzip.exe") || FileExist("UltimMCzipped.zip")){
 	MsgBox, %launchername% Dosyalarında bir hata algılandı!
 	Goto, ButtonSıfırla
 }
+
 
 Start:
 Gui, New
@@ -85,7 +178,6 @@ Gui, Add, Button,  x104 y53, Kur
 if (enablediscord == "true")
 Gui, Add, Button, , Discord
 Gui, Add, Button,  x23 y140 W200, İptal
-
 Gui, Tab, 2
 Gui, Add, Text,, Lütfen yapacağınız işlemi aşağıdan seçiniz. 
 Gui, Add, Button, , Ayarlar
@@ -118,17 +210,17 @@ if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 	if WinExist("ahk_exe UltimMC.exe")
 	WinClose, ahk_exe UltimMC.exe
     IniRead, def, Resources\config.ini, 1, ip
-    IniRead, Link, Resources\config.ini, 1, Link
+    IniRead, CurVer, Resources\config.ini, 1, CurVer
     IniRead, Name, Resources\config.ini, 1, Name
 	if (enablecustomip == "false"){
 		InputBox, ip, Sunucu adresini giriniz, Sunucu adresini giriniz. (Örnek: %customip%); Boş bırakırsanız ana menüye atar., , , 140, , , , , %def%
 			if (ErrorLevel = 0) {
 				if (ip = "") {
-					run, cmd.exe /c "%A_ScriptDir%\UltimMC\UltimMC" --launch %Link% --profile %Name%, , Hide
+					run, cmd.exe /c "%A_ScriptDir%\UltimMC\UltimMC" --launch %CurVer% --profile %Name%, , Hide
 					IniWrite, "", Resources\config.ini, 1, ip
 					}
 				else {
-					run, cmd.exe /c "%A_ScriptDir%\UltimMC\UltimMC" --launch %Link% --profile %Name% --server %ip%, , Hide
+					run, cmd.exe /c "%A_ScriptDir%\UltimMC\UltimMC" --launch %CurVer% --profile %Name% --server %ip%, , Hide
 					IniWrite, %ip%, Resources\config.ini, 1, ip
 					}
 			}
@@ -137,7 +229,7 @@ if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 				}
 	}
 	else if (enablecustomip == "true"){
-		run, cmd.exe /c "%A_ScriptDir%\UltimMC\UltimMC" --launch %Link% --profile %Name% --server %customip%, , Hide
+		run, cmd.exe /c "%A_ScriptDir%\UltimMC\UltimMC" --launch %CurVer% --profile %Name% --server %customip%, , Hide
 	}
 	else{
 	MsgBox, enablecustomip variable is invalid.
@@ -155,12 +247,8 @@ if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 Gui, Cancel
 if WinExist("ahk_exe UltimMC.exe")
 WinClose, ahk_exe UltimMC.exe
-UrlDownloadToFile, %database%, Resources\kod.ini
-FileRead, kod, Resources\kod.ini 
-FileDelete, Resources\kod.ini
-IniWrite, %kod%, Resources\config.ini, 1, kod
-IniRead, Link, Resources\config.ini, 1, Link
-FileMoveDir, UltimMC\instances\%Link%\.minecraft, files, 2
+IniRead, CurVer, Resources\config.ini, 1, CurVer
+FileMoveDir, UltimMC\instances\%CurVer%\.minecraft, files, 2
 FileRemoveDir, files\mods, 1
 FileRemoveDir, files\config, 1
 FileRemoveDir, files\defaultconfigs, 1
@@ -169,26 +257,19 @@ if (reqpass==true){
 FileDelete, files\.sl_password
 }
 FileRemoveDir, UltimMC\instances, 1
-run, cmd.exe /c title SETUP && UltimMC\UltimMC --import https://www.bit.ly/%kod%, , HIDE
-instance:
-if WinExist("New Instance - UltimMC 5"){
-Sleep, 100
+run, cmd.exe /c title SETUP && UltimMC\UltimMC --import https://www.bit.ly/%NewVer%, , HIDE
+WinWait,New Instance - UltimMC 5
 ControlSend, , {Enter}, New Instance - UltimMC 5
-adlkfj:
-if WinExist("Please wait... - UltimMC 5"){
-downloading:
-Sleep, 100
-if WinExist("Please wait... - UltimMC 5"){
-Goto, downloading
-}
+WinWait,Please wait... - UltimMC 5
+WinWaitClose,Please wait... - UltimMC 5
 if WinExist("ahk_exe UltimMC.exe")
 WinClose, ahk_exe UltimMC.exe
-IniWrite, %kod%, Resources\config.ini, 1, Link
-FileCopyDir, files, UltimMC\instances\%kod%\.minecraft, 1
+IniWrite, %NewVer%, Resources\config.ini, 1, CurVer
+FileCopyDir, files, UltimMC\instances\%NewVer%\.minecraft, 1
 if (reqpass==true){
 IniRead, pass, Resources\config.ini, 1, Password
-FileDelete, UltimMC\instances\%kod%\.minecraft\.sl_password
-FileAppend, %pass%, UltimMC\instances\%kod%\.minecraft\.sl_password
+FileDelete, UltimMC\instances\%NewVer%\.minecraft\.sl_password
+FileAppend, %pass%, UltimMC\instances\%NewVer%\.minecraft\.sl_password
 }
 FileRemoveDir, files, 1
 if(autostart == "false"){
@@ -200,14 +281,6 @@ else if(autostart == "true"){
 }
 else{
 	MsgBox, Variable error!
-}
-}
-else{
-	Goto, adlkfj
-}
-}
-else{
-	goto, instance
 }
 }
 else {
@@ -243,26 +316,9 @@ FileRemoveDir,UltimMC , 1
 if WinExist("ahk_exe UltimMC.exe")
 WinClose, ahk_exe UltimMC.exe
 RegRead, Hostnm, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\Tcpip\Parameters, Hostname
-RegRead, Java8Path, HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Runtime Environment\1.8, JavaHome
+if()
 errortest=%ErrorLevel%
-StringReplace, Java8, Java8Path, \ , /, All
-if (errortest!=0 || !FileExist(Java8Path " \bin\javaw.exe")){
-	MsgBox, 4,,Uyarı! Sizde java 8 bulunmamaktadır. Java yüklemek ister misiniz?,
-	IfMsgBox, Yes
-	{
-		Gui, Cancel
-		UrlDownloadWithBar("https://github.com/umut25/AILUB-Public/releases/download/java/jre-8u341-windows-x64.exe","Javaİndirici.exe")
-		Progress, Off
-		RunWait, Javaİndirici.exe
-		FileDelete, Javaİndirici.exe
-		RegRead, Java8Path, HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Runtime Environment\1.8, JavaHome
-		errortest=%ErrorLevel%
-		StringReplace, Java8, Java8Path, \ , /, All
-		if (errortest!=0 || !FileExist(Java8Path "\bin\javaw.exe")){
-			MsgBox, Java kurulumu başarısız
-			Exit
-		}
-			config = 
+			config =
 		(
 		Analytics=true
 		AnalyticsClientID=d7d2fade-826e-4661-b5bb-0ea45643db5a
@@ -280,7 +336,7 @@ if (errortest!=0 || !FileExist(Java8Path " \bin\javaw.exe")){
 		InstanceDir=instances
 		JProfilerPath=
 		JVisualVMPath=
-		JavaPath=javaw
+		JavaPath=%JavaPath%
 		JsonEditor=
 		JvmArgs=
 		Language=en_US
@@ -315,122 +371,8 @@ if (errortest!=0 || !FileExist(Java8Path " \bin\javaw.exe")){
 		UseNativeGLFW=false
 		UseNativeOpenAL=false
 		WrapperCommand=
-		)
-	}
-	IfMsgBox, No
-	{
-	config = 
-	(
-	Analytics=true
-	AnalyticsClientID=d7d2fade-826e-4661-b5bb-0ea45643db5a
-	AnalyticsSeen=2
-	AutoCloseConsole=false
-	AutoUpdate=false
-	CentralModsDir=mods
-	ConsoleFont=Courier
-	ConsoleFontSize=10
-	ConsoleMaxLines=100000
-	ConsoleOverflowStop=true
-	IconTheme=multimc
-	IconsDir=icons
-	InstSortMode=Name
-	InstanceDir=instances
-	JProfilerPath=
-	JVisualVMPath=
-	JavaPath=javaw
-	JsonEditor=
-	JvmArgs=
-	Language=en_US
-	LastHostname=%Hostnm%
-	LastUsedGroupForNewInstance=
-	LaunchMaximized=false
-	MCEditPath=
-	MainWindowGeometry=AdnQywACAAAAAAIoAAAAuQAABVcAAAM3AAACMAAAANgAAAVPAAADLwAAAAAAAAAAB4A=
-	MainWindowState=AAAA/wAAAAD9AAAAAAAAAqsAAAIIAAAABAAAAAQAAAAIAAAACPwAAAADAAAAAQAAAAEAAAAeAGkAbgBzAHQAYQBuAGMAZQBUAG8AbwBsAEIAYQByAwAAAAD/////AAAAAAAAAAAAAAACAAAAAQAAABYAbQBhAGkAbgBUAG8AbwBsAEIAYQByAQAAAAD/////AAAAAAAAAAAAAAADAAAAAQAAABYAbgBlAHcAcwBUAG8AbwBsAEIAYQByAQAAAAD/////AAAAAAAAAAA=
-	MaxMemAlloc=%RAM%
-	MinMemAlloc=%RAM%
-	MinecraftWinHeight=480
-	MinecraftWinWidth=854
-	NewInstanceGeometry=AdnQywACAAAAAAJLAAABGgAABTQAAALWAAACUwAAATkAAAUsAAACzgAAAAAAAAAAB4A=
-	PagedGeometry=AdnQywACAAAAAAKzAAAAgAAABMwAAANxAAACuwAAAJ8AAATEAAADaQAAAAAAAAAAB4A=
-	PasteEEAPIKey=multimc
-	PostExitCommand=
-	PreLaunchCommand=
-	ProxyAddr=127.0.0.1
-	ProxyPass=
-	ProxyPort=8080
-	ProxyType=None
-	ProxyUser=
-	RecordGameTime=true
-	SelectedInstance=
-	ShowConsole=false
-	ShowConsoleOnError=true
-	ShowGameTime=true
-	ShowGlobalGameTime=true
-	ShownNotifications=
-	UpdateChannel=custom
-	UseNativeGLFW=false
-	UseNativeOpenAL=false
-	WrapperCommand=
-	)
-	}
-}
-else{
-	config = 
-	(
-	Analytics=true
-	AnalyticsClientID=d7d2fade-826e-4661-b5bb-0ea45643db5a
-	AnalyticsSeen=2
-	AutoCloseConsole=false
-	AutoUpdate=false
-	CentralModsDir=mods
-	ConsoleFont=Courier
-	ConsoleFontSize=10
-	ConsoleMaxLines=100000
-	ConsoleOverflowStop=true
-	IconTheme=multimc
-	IconsDir=icons
-	InstSortMode=Name
-	InstanceDir=instances
-	JProfilerPath=
-	JVisualVMPath=
-	JavaPath=%Java8%/bin/javaw.exe
-	JsonEditor=
-	JvmArgs=
-	Language=en_US
-	LastHostname=%Hostnm%
-	LastUsedGroupForNewInstance=
-	LaunchMaximized=false
-	MCEditPath=
-	MainWindowGeometry=AdnQywACAAAAAAIoAAAAuQAABVcAAAM3AAACMAAAANgAAAVPAAADLwAAAAAAAAAAB4A=
-	MainWindowState=AAAA/wAAAAD9AAAAAAAAAqsAAAIIAAAABAAAAAQAAAAIAAAACPwAAAADAAAAAQAAAAEAAAAeAGkAbgBzAHQAYQBuAGMAZQBUAG8AbwBsAEIAYQByAwAAAAD/////AAAAAAAAAAAAAAACAAAAAQAAABYAbQBhAGkAbgBUAG8AbwBsAEIAYQByAQAAAAD/////AAAAAAAAAAAAAAADAAAAAQAAABYAbgBlAHcAcwBUAG8AbwBsAEIAYQByAQAAAAD/////AAAAAAAAAAA=
-	MaxMemAlloc=%RAM%
-	MinMemAlloc=%RAM%
-	MinecraftWinHeight=480
-	MinecraftWinWidth=854
-	NewInstanceGeometry=AdnQywACAAAAAAJLAAABGgAABTQAAALWAAACUwAAATkAAAUsAAACzgAAAAAAAAAAB4A=
-	PagedGeometry=AdnQywACAAAAAAKzAAAAgAAABMwAAANxAAACuwAAAJ8AAATEAAADaQAAAAAAAAAAB4A=
-	PasteEEAPIKey=multimc
-	PostExitCommand=
-	PreLaunchCommand=
-	ProxyAddr=127.0.0.1
-	ProxyPass=
-	ProxyPort=8080
-	ProxyType=None
-	ProxyUser=
-	RecordGameTime=true
-	SelectedInstance=
-	ShowConsole=false
-	ShowConsoleOnError=true
-	ShowGameTime=true
-	ShowGlobalGameTime=true
-	ShownNotifications=
-	UpdateChannel=custom
-	UseNativeGLFW=false
-	UseNativeOpenAL=false
-	WrapperCommand=
-	)
-}
+		)	
+
 account = 
 					(
 {
@@ -455,17 +397,12 @@ UrlDownloadWithBar("http://stahlworks.com/dev/unzip.exe", "unzip.exe")
 UrlDownloadWithBar("https://github.com/umut25/databasetest/raw/main/UltimMCzipped.zip", "UltimMCzipped.zip")
 if NOT FileExist(A_ScriptDir "\Resources")
 FileCreateDir, Resources
-UrlDownloadToFile, %database%, Resources\kod.ini
-FileRead, kod, Resources\kod.ini
-FileDelete, Resources\kod.ini
-IniWrite, %kod%, Resources\config.ini, 1, kod
 RunWait, cmd.exe /c unzip UltimMCzipped.zip, , HIDE
 FileDelete, unzip.exe
 FileDelete, UltimMCzipped.zip
 FileAppend, %account%, UltimMC\accounts.json
 FileAppend, %config%, UltimMC\ultimmc.cfg
-run, cmd.exe /c title SETUP && UltimMC\UltimMC --import https://www.bit.ly/%kod%, , HIDE
-
+run, cmd.exe /c title SETUP && UltimMC\UltimMC --import https://www.bit.ly/%NewVer%, , HIDE
 WinWait,New Instance - UltimMC 5
 Sleep, 100
 ControlSend, , {Enter}, New Instance - UltimMC 5
@@ -476,16 +413,16 @@ if WinExist("ahk_exe UltimMC.exe")
 FileCreateDir, Resources
 IniWrite, %RAM%, Resources\config.ini, 1, RAM
 IniWrite, %Name%, Resources\config.ini, 1, Name
-IniWrite, %kod%, Resources\config.ini, 1, Link
+IniWrite, %NewVer%, Resources\config.ini, 1, CurVer
 IniWrite, true, Resources\config.ini, 1, Installed
 if (reqpass==true){
 IniWrite, %pass%, Resources\config.ini, 1, Password
 }
 IniWrite, %customip%, Resources\config.ini, 1, ip
 if (reqpass==true){
-FileAppend, %pass%, UltimMC\instances\%kod%\.minecraft\.sl_password
+FileAppend, %pass%, UltimMC\instances\%NewVer%\.minecraft\.sl_password
 }
-if FileExist("UltimMC\instances\" Link) {
+if FileExist("UltimMC\instances\" NewVer) {
 	if(autostart == "false"){
 	MsgBox, Başarıyla kuruldu!
 	Goto, Start
@@ -529,7 +466,7 @@ if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 		InstanceDir=instances
 		JProfilerPath=
 		JVisualVMPath=
-		JavaPath=
+		JavaPath=%JavaPath%
 		JsonEditor=
 		JvmArgs=
 		Language=en_US
@@ -641,8 +578,8 @@ else{
 }
 ButtonOyunKlasörü:
 if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
-IniRead, Link, Resources\config.ini, 1, Link
-Run, UltimMC\instances\%Link%\.minecraft\
+IniRead, CurVer, Resources\config.ini, 1, CurVer
+Run, UltimMC\instances\%CurVer%\.minecraft\
 return
 }
 else {
@@ -675,9 +612,9 @@ if (FileExist("Resources\config.ini") && FileExist("UltimMC")) {
 	InputBox, Pass, Serverda kullanacağınız şifreyi giriniz., Sunucu şifrenizi giriniz., HIDE, , 130,
 	if (ErrorLevel = 0) {
 		
-		IniRead, Link, Resources\config.ini, 1, Link
-		FileDelete, UltimMC\instances\%Link%\.minecraft\.sl_password
-		FileAppend, %Pass%, UltimMC\instances\%Link%\.minecraft\.sl_password
+		IniRead, CurVer, Resources\config.ini, 1, CurVer
+		FileDelete, UltimMC\instances\%CurVer%\.minecraft\.sl_password
+		FileAppend, %Pass%, UltimMC\instances\%CurVer%\.minecraft\.sl_password
 		IniWrite, %Pass%, Resources\config.ini, 1, Password
 		Goto, Start
 	}
