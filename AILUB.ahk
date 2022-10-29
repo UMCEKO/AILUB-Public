@@ -18,9 +18,9 @@ reqpass = false
 ; Enable Custom ip's? (default: enablecustomip = false)
 enablecustomip = true
 ; Custom ip that the launcher will connect when the game starts
-customip = 193.35.154.49:25565
+customip = 
 ; Name of the launcher
-launchername = ATM8
+launchername = AILUB
 ; Auto start when the game gets installed? (default: autostart = false)
 autostart = false
 ;Which java version to use? (options; 8,17+)
