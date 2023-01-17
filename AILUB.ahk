@@ -6,7 +6,7 @@ MsgBox, ,%launchername% ,Made by Umut Cevdet Koçak (Discord: Umut#3333)
 
 
 ; Where to pull the bit.ly codes from
-database = https://raw.githubusercontent.com/umut25/AILUBModpackDB/main/AllTheMods8.txt
+database = https://raw.githubusercontent.com/UMCEKO/AILUBModpackDB/main/vanilla.txt
 ; Enable the discord button? (default: enablediscord = true)
 enablediscord = false
 ; Your discord adress
